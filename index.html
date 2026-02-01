@@ -3,80 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gem Math School: Final</title>
+    <title>Gem Math School: Final Fix</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --primary: #FF9800; --secondary: #4CAF50; --bg: #2D4C3E; --text-dark: #333; }
+        :root { --primary: #FF9800; --secondary: #4CAF50; --bg: #2D4C3E; --text-dark: #333; --error: #F44336; }
         body { font-family: 'Nunito', sans-serif; background-color: var(--bg); margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
 
         .app-container {
-            background: white; border-radius: 25px; padding: 15px 25px;
-            width: 96%; max-width: 900px; height: 96vh; max-height: 720px;
+            background: white; border-radius: 25px; padding: 15px 20px;
+            width: 94%; max-width: 900px; height: 96vh; max-height: 800px;
             display: flex; flex-direction: column; position: relative; box-shadow: 0 15px 50px rgba(0,0,0,0.5);
         }
 
-        /* 헤더: 타이틀, 선택창, 리셋버튼 한 줄 배치 */
-        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        h1 { font-family: 'Fredoka One', cursive; font-size: 1.4rem; margin: 0; color: var(--bg); }
-        .header-controls { display: flex; gap: 10px; align-items: center; }
-        
-        .btn-reset { background: #FFEBEE; border: 1.5px solid #FFCDD2; color: #E53935; font-size: 0.75rem; font-weight: 800; cursor: pointer; padding: 6px 12px; border-radius: 8px; transition: 0.2s; }
-        .btn-reset:hover { background: #E53935; color: white; }
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        h1 { font-family: 'Fredoka One', cursive; font-size: 1.3rem; margin: 0; color: var(--bg); }
+        .header-controls { display: flex; gap: 8px; align-items: center; }
+        .btn-reset { background: #FFEBEE; border: 1.5px solid #FFCDD2; color: #E53935; font-size: 0.7rem; font-weight: 800; cursor: pointer; padding: 5px 10px; border-radius: 8px; }
 
-        /* 🎖️ 뱃지 그리드 (50% 확대) */
-        .badge-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 10px; width: 100%; margin-bottom: 15px; }
-        .badge {
-            aspect-ratio: 0.8/1; border-radius: 12px; background: #f0f0f0; border: 2px solid #ddd;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            filter: grayscale(1); opacity: 0.15; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* 🎖️ 뱃지 그리드: 세로모드 대응 */
+        .badge-grid { 
+            display: grid; 
+            grid-template-columns: repeat(9, 1fr); /* 기본 PC/가로모드 */
+            gap: 8px; width: 100%; margin-bottom: 15px; 
         }
-        .badge.active { filter: grayscale(0); opacity: 1; border-color: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transform: scale(1.05); }
-        .badge-icon { font-size: 2.2rem; } /* 기존 1.5rem에서 약 1.5배 확대 */
-        .badge-text { font-size: 0.65rem; font-weight: 900; color: white; margin-top: 4px; display: block; }
-        
+
+        /* 아이패드 세로모드나 폭이 좁을 때 2줄로 변경 */
+        @media (max-width: 768px) {
+            .badge-grid { grid-template-columns: repeat(5, 1fr); }
+            .badge-grid div:nth-child(n+6) { grid-column: span 1; }
+        }
+
+        .badge {
+            aspect-ratio: 0.85/1; border-radius: 12px; background: #f0f0f0; border: 2px solid #ddd;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            filter: grayscale(1); opacity: 0.15; transition: 0.4s;
+        }
+        .badge.active { filter: grayscale(0); opacity: 1; border-color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .badge-icon { font-size: 2rem; }
+        .badge-text { font-size: 0.6rem; font-weight: 900; color: white; margin-top: 3px; }
+
         .b-1.active { background: #CD7F32; } .b-2.active { background: #9E9E9E; } 
         .b-3.active { background: #4CAF50; } .b-4.active { background: #F44336; } 
         .b-5.active { background: #2196F3; } .b-6.active { background: #9C27B0; } 
         .b-7.active { background: #FF9800; } .b-8.active { background: #FFEB3B; } 
         .b-9.active { background: #00E5FF; } .b-8.active .badge-text { color: #5D4037; }
 
-        /* 학습 영역 */
-        .learning-area { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-        
-        /* 설명 그림판 (20% 축소) */
-        .visual-box { 
-            background: #fafafa; border-radius: 20px; display: flex; flex-wrap: wrap; 
-            justify-content: center; align-content: center; gap: 8px; border: 1.5px solid #eee; 
-            padding: 10px; min-height: 80px; flex: 0.8; /* 비율 축소 */
-        }
-        .basket { background: white; border-radius: 10px; padding: 4px 8px; display: flex; gap: 4px; border: 2px solid #f0f0f0; }
-        .fruit { font-size: 1.4rem; }
+        .learning-area { flex: 1; display: flex; flex-direction: column; gap: 8px; justify-content: space-between; }
+        .visual-box { background: #fafafa; border-radius: 20px; display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 6px; border: 1.5px solid #eee; padding: 10px; flex: 0.7; }
+        .basket { background: white; border-radius: 10px; padding: 4px; display: flex; gap: 3px; border: 2px solid #f0f0f0; }
+        .fruit { font-size: 1.3rem; }
 
-        .formula-box { display: flex; align-items: baseline; justify-content: center; gap: 15px; }
-        .main-mult { font-size: 3.5rem; font-weight: 900; color: var(--bg); font-family: 'Fredoka One', cursive; }
-        .hint-add { font-size: 1.2rem; color: #aaa; background: #f8f8f8; padding: 4px 15px; border-radius: 20px; }
+        .formula-box { display: flex; align-items: baseline; justify-content: center; gap: 12px; }
+        .main-mult { font-size: 3rem; font-weight: 900; color: var(--bg); font-family: 'Fredoka One', cursive; }
+        .hint-add { font-size: 1rem; color: #aaa; background: #f8f8f8; padding: 3px 12px; border-radius: 15px; }
 
-        /* 퀴즈 박스: BACK - QUIZ - NEXT 통합 레이아웃 */
-        .quiz-container { 
-            background: #FFFDE7; border-radius: 25px; padding: 15px; border: 3px dashed var(--primary);
-            display: flex; align-items: center; justify-content: space-between; gap: 10px;
-        }
-        .nav-btn { font-family: 'Fredoka One', cursive; padding: 15px 25px; border: none; border-radius: 15px; cursor: pointer; font-size: 1.1rem; transition: 0.3s; min-width: 100px; }
+        .quiz-container { background: #FFFDE7; border-radius: 20px; padding: 12px; border: 3px dashed var(--primary); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .nav-btn { font-family: 'Fredoka One', cursive; padding: 12px 20px; border: none; border-radius: 12px; cursor: pointer; font-size: 1rem; min-width: 80px; }
         .btn-back { background: #eee; color: #666; }
         .btn-next { background: #BDBDBD; color: white; }
         
-        .quiz-core { display: flex; align-items: center; gap: 15px; flex: 1; justify-content: center; }
-        .quiz-q { font-size: 2.2rem; font-weight: 900; color: var(--text-dark); }
-        input { width: 100px; padding: 10px; font-size: 2.5rem; text-align: center; border: 4px solid var(--secondary); border-radius: 15px; outline: none; }
+        .quiz-core { display: flex; align-items: center; gap: 10px; flex: 1; justify-content: center; }
+        .quiz-q { font-size: 1.8rem; font-weight: 900; }
+        input { width: 80px; padding: 8px; font-size: 2rem; text-align: center; border: 4px solid var(--secondary); border-radius: 12px; outline: none; transition: 0.3s; }
+        input.wrong { border-color: var(--error); background: #FFEBEE; animation: shake 0.3s; }
 
-        @media (max-height: 550px) {
-            .badge-icon { font-size: 1.6rem; }
-            .badge-text { display: none; }
-            .main-mult { font-size: 2.5rem; }
-            input { font-size: 1.8rem; width: 80px; }
-            .nav-btn { padding: 10px 15px; min-width: 80px; }
-        }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+        #puppy-overlay { position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%) scale(0); font-size: 100px; z-index: 100; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     </style>
 </head>
 <body onclick="initAudio()">
@@ -85,7 +79,7 @@
     <div class="header-row">
         <h1>Gem Math School! 💎</h1>
         <div class="header-controls">
-            <select id="baseNum" onchange="resetToStart()" style="padding: 6px; font-family: 'Fredoka One'; border-radius: 8px; border: 2px solid #ddd;"></select>
+            <select id="baseNum" onchange="resetToStart()" style="padding: 5px; font-family: 'Fredoka One'; border-radius: 8px; border: 1.5px solid #ddd;"></select>
             <button class="btn-reset" onclick="resetAllProgress()">RESET 🔄</button>
         </div>
     </div>
@@ -102,17 +96,15 @@
 
         <div class="quiz-container">
             <button onclick="changeStep(-1)" class="nav-btn btn-back">⬅ BACK</button>
-            
             <div class="quiz-core">
                 <span class="quiz-q" id="flipQuestion">1 × 2 = </span>
                 <input type="number" id="flipAns" oninput="checkQuiz()" placeholder="?" inputmode="numeric">
             </div>
-
             <button id="nextBtn" onclick="attemptNext()" class="nav-btn btn-next">NEXT ➡</button>
         </div>
     </div>
 
-    <div id="puppy-overlay" style="position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) scale(0); font-size: 120px; z-index: 100; transition: 0.3s;">🐶</div>
+    <div id="puppy-overlay">🐶</div>
 </div>
 
 <script>
@@ -123,6 +115,25 @@
     const gemNames = ["BRONZE", "STONE", "EMERALD", "RUBY", "SAPPHIRE", "AMETHYST", "TOPAZ", "AMBER", "DIAMOND"];
 
     function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+
+    function playSound(type) {
+        if (!audioCtx) return; const now = audioCtx.currentTime;
+        const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+        if (type === 'woof') { // 정답!
+            o.type = 'triangle'; o.frequency.setValueAtTime(160, now);
+            o.frequency.exponentialRampToValueAtTime(450, now + 0.1);
+            g.gain.setValueAtTime(0.2, now); g.gain.linearRampToValueAtTime(0, now + 0.2);
+        } else if (type === 'whimper') { // 오답... (낑낑)
+            o.type = 'sine'; o.frequency.setValueAtTime(400, now);
+            o.frequency.exponentialRampToValueAtTime(200, now + 0.3);
+            g.gain.setValueAtTime(0.1, now); g.gain.linearRampToValueAtTime(0, now + 0.3);
+        } else if (type === 'land') { // 보석 획득
+            o.type = 'sine'; o.frequency.setValueAtTime(180, now);
+            o.frequency.exponentialRampToValueAtTime(70, now + 0.4);
+            g.gain.setValueAtTime(0.4, now); g.gain.linearRampToValueAtTime(0, now + 0.5);
+        }
+        o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(now + 0.5);
+    }
 
     function initBadges() {
         const container = document.getElementById('badgeContainer');
@@ -137,20 +148,32 @@
         }
     }
 
-    function playDogSound(type) {
-        if (!audioCtx) return; const now = audioCtx.currentTime;
-        if (type === 'woof') {
-            const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
-            o.type = 'triangle'; o.frequency.setValueAtTime(160, now);
-            o.frequency.exponentialRampToValueAtTime(450, now + 0.1);
-            g.gain.setValueAtTime(0.2, now); g.gain.linearRampToValueAtTime(0, now + 0.2);
-            o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(now + 0.2);
-        } else if (type === 'land') {
-            const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
-            o.type = 'sine'; o.frequency.setValueAtTime(180, now);
-            o.frequency.exponentialRampToValueAtTime(70, now + 0.4);
-            g.gain.setValueAtTime(0.4, now); g.gain.linearRampToValueAtTime(0, now + 0.5);
-            o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(now + 0.5);
+    function checkQuiz() {
+        const base = parseInt(document.getElementById('baseNum').value);
+        const input = document.getElementById('flipAns');
+        const overlay = document.getElementById('puppy-overlay');
+        
+        if (input.value.length === 0) return;
+
+        if (input.value == base * currentStep) {
+            isQuizSolved = true;
+            input.classList.remove('wrong');
+            playSound('woof');
+            overlay.innerText = "🐶";
+            overlay.style.transform = "translate(-50%, -50%) scale(1)";
+            setTimeout(() => overlay.style.transform = "translate(-50%, -50%) scale(0)", 800);
+            document.getElementById('nextBtn').style.background = "var(--secondary)";
+        } else if (input.value.length >= String(base * currentStep).length) {
+            // 자릿수가 다 채워졌는데 틀린 경우
+            input.classList.add('wrong');
+            playSound('whimper');
+            overlay.innerText = "😢";
+            overlay.style.transform = "translate(-50%, -50%) scale(1)";
+            setTimeout(() => {
+                overlay.style.transform = "translate(-50%, -50%) scale(0)";
+                input.classList.remove('wrong');
+                input.value = '';
+            }, 800);
         }
     }
 
@@ -162,20 +185,10 @@
                 const span = document.createElement('span'); span.className = 'fruit'; span.innerText = icon; basket.appendChild(span);
             }
             if (idx < groups.length - 1) {
-                const div = document.createElement('div'); div.style.borderLeft="2px dashed #ccc"; div.style.height="20px"; div.style.margin="0 4px"; basket.appendChild(div);
+                const div = document.createElement('div'); div.style.borderLeft="1.5px dashed #ccc"; div.style.height="15px"; div.style.margin="0 3px"; basket.appendChild(div);
             }
         });
         return basket;
-    }
-
-    function checkQuiz() {
-        const base = parseInt(document.getElementById('baseNum').value);
-        if (document.getElementById('flipAns').value == base * currentStep && !isQuizSolved) {
-            isQuizSolved = true; playDogSound('woof');
-            document.getElementById('puppy-overlay').style.transform = "translate(-50%, -50%) scale(1)";
-            setTimeout(() => document.getElementById('puppy-overlay').style.transform = "translate(-50%, -50%) scale(0)", 800);
-            document.getElementById('nextBtn').style.background = "var(--secondary)";
-        }
     }
 
     function updateView() {
@@ -207,7 +220,7 @@
             flyer.style.opacity = "0";
         }, 200);
         setTimeout(() => {
-            playDogSound('land');
+            playSound('land');
             if (!masteredTables.includes(base)) {
                 masteredTables.push(base);
                 localStorage.setItem('masteredTables', JSON.stringify(masteredTables));
