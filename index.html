@@ -3,131 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Puppy Math: Master Collector</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+    <title>Gem Math School: Final</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root { 
-            --primary: #FF9800; --secondary: #4CAF50; 
-            --bg: #2D4C3E; --text-dark: #333;
-        }
-        body {
-            font-family: 'Nunito', sans-serif; background-color: var(--bg); 
-            margin: 0; padding: 0; display: flex; justify-content: center;
-            align-items: flex-start; min-height: 100vh; overflow: hidden;
+        :root { --primary: #FF9800; --secondary: #4CAF50; --bg: #2D4C3E; --text-dark: #333; }
+        body { font-family: 'Nunito', sans-serif; background-color: var(--bg); margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
+
+        .app-container {
+            background: white; border-radius: 25px; padding: 15px 25px;
+            width: 96%; max-width: 900px; height: 96vh; max-height: 720px;
+            display: flex; flex-direction: column; position: relative; box-shadow: 0 15px 50px rgba(0,0,0,0.5);
         }
 
-        /* 🎖️ 뱃지 사이드바 */
-        .badge-sidebar {
-            position: absolute; top: 10px; left: 10px;
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
-            background: rgba(0, 0, 0, 0.2); padding: 8px; border-radius: 15px; z-index: 10;
-        }
+        /* 헤더: 타이틀, 선택창, 리셋버튼 한 줄 배치 */
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        h1 { font-family: 'Fredoka One', cursive; font-size: 1.4rem; margin: 0; color: var(--bg); }
+        .header-controls { display: flex; gap: 10px; align-items: center; }
+        
+        .btn-reset { background: #FFEBEE; border: 1.5px solid #FFCDD2; color: #E53935; font-size: 0.75rem; font-weight: 800; cursor: pointer; padding: 6px 12px; border-radius: 8px; transition: 0.2s; }
+        .btn-reset:hover { background: #E53935; color: white; }
+
+        /* 🎖️ 뱃지 그리드 (50% 확대) */
+        .badge-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 10px; width: 100%; margin-bottom: 15px; }
         .badge {
-            width: 54px; height: 56px; border-radius: 10px;
-            background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.1);
+            aspect-ratio: 0.8/1; border-radius: 12px; background: #f0f0f0; border: 2px solid #ddd;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            filter: grayscale(1); opacity: 0.3; transition: 0.5s;
+            filter: grayscale(1); opacity: 0.15; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .badge.active { filter: grayscale(0); opacity: 1; border-color: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.3); }
-        .badge-icon { font-size: 1.4rem; }
-        .badge-text { font-size: 0.4rem; font-weight: 800; color: white; margin-top: 1px; text-align: center; line-height: 1.1; }
-
-        /* 보석 테마 색상 */
+        .badge.active { filter: grayscale(0); opacity: 1; border-color: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transform: scale(1.05); }
+        .badge-icon { font-size: 2.2rem; } /* 기존 1.5rem에서 약 1.5배 확대 */
+        .badge-text { font-size: 0.65rem; font-weight: 900; color: white; margin-top: 4px; display: block; }
+        
         .b-1.active { background: #CD7F32; } .b-2.active { background: #9E9E9E; } 
         .b-3.active { background: #4CAF50; } .b-4.active { background: #F44336; } 
         .b-5.active { background: #2196F3; } .b-6.active { background: #9C27B0; } 
         .b-7.active { background: #FF9800; } .b-8.active { background: #FFEB3B; } 
-        .b-9.active { background: #00E5FF; animation: gem-glow 1s infinite alternate; }
-        .b-8.active .badge-text { color: #333; }
+        .b-9.active { background: #00E5FF; } .b-8.active .badge-text { color: #5D4037; }
 
-        @keyframes gem-glow { from { transform: scale(1); } to { transform: scale(1.1); box-shadow: 0 0 15px #00E5FF; } }
-
-        /* 리셋 버튼 */
-        .btn-reset {
-            position: absolute; bottom: 10px; left: 10px; padding: 6px 12px;
-            background: rgba(255, 82, 82, 0.3); color: white; border: none;
-            border-radius: 8px; font-size: 0.7rem; cursor: pointer; font-family: 'Fredoka One';
-        }
-
-        .flying-badge {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(5);
-            z-index: 1000; pointer-events: none; transition: 1s cubic-bezier(0.19, 1, 0.22, 1);
-            display: flex; flex-direction: column; align-items: center;
-        }
-
-        .app-container {
-            background: white; border-radius: 25px; padding: 12px; margin-top: 5px;
-            max-width: 800px; width: 96%; text-align: center; color: var(--text-dark); 
-            max-height: 98vh; position: relative;
-        }
-
-        .visual-box {
-            background: #fdfdfd; border-radius: 15px; padding: 8px; margin: 5px 0;
-            min-height: 80px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; border: 1px solid #eee;
-        }
-
-        .basket { background: #f0f0f0; border: 1.5px solid #dcdcdc; border-radius: 8px; padding: 4px; display: flex; gap: 4px; align-items: center; }
-        .divider { border-left: 2px dashed #bbb; height: 20px; margin: 0 2px; }
-        .fruit { font-size: 1.2rem; }
-
-        .formula-box { display: flex; align-items: baseline; justify-content: center; gap: 10px; margin: 5px 0; }
-        .main-mult { font-size: 3.2rem; font-weight: 900; color: var(--bg); font-family: 'Fredoka One', cursive; }
-        .hint-add { font-size: 1rem; color: #888; background: #f8f8f8; padding: 4px 10px; border-radius: 15px; }
-
-        .quiz-section { background: #FFFDE7; border-radius: 15px; padding: 10px; border: 2px dashed var(--primary); }
-        input { width: 85px; padding: 10px; font-size: 1.8rem; text-align: center; border: 3px solid var(--secondary); border-radius: 15px; outline: none; inputmode: numeric; }
+        /* 학습 영역 */
+        .learning-area { flex: 1; display: flex; flex-direction: column; gap: 10px; }
         
-        button { font-family: 'Fredoka One', cursive; padding: 12px 25px; border: none; border-radius: 12px; cursor: pointer; }
+        /* 설명 그림판 (20% 축소) */
+        .visual-box { 
+            background: #fafafa; border-radius: 20px; display: flex; flex-wrap: wrap; 
+            justify-content: center; align-content: center; gap: 8px; border: 1.5px solid #eee; 
+            padding: 10px; min-height: 80px; flex: 0.8; /* 비율 축소 */
+        }
+        .basket { background: white; border-radius: 10px; padding: 4px 8px; display: flex; gap: 4px; border: 2px solid #f0f0f0; }
+        .fruit { font-size: 1.4rem; }
+
+        .formula-box { display: flex; align-items: baseline; justify-content: center; gap: 15px; }
+        .main-mult { font-size: 3.5rem; font-weight: 900; color: var(--bg); font-family: 'Fredoka One', cursive; }
+        .hint-add { font-size: 1.2rem; color: #aaa; background: #f8f8f8; padding: 4px 15px; border-radius: 20px; }
+
+        /* 퀴즈 박스: BACK - QUIZ - NEXT 통합 레이아웃 */
+        .quiz-container { 
+            background: #FFFDE7; border-radius: 25px; padding: 15px; border: 3px dashed var(--primary);
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+        }
+        .nav-btn { font-family: 'Fredoka One', cursive; padding: 15px 25px; border: none; border-radius: 15px; cursor: pointer; font-size: 1.1rem; transition: 0.3s; min-width: 100px; }
+        .btn-back { background: #eee; color: #666; }
         .btn-next { background: #BDBDBD; color: white; }
+        
+        .quiz-core { display: flex; align-items: center; gap: 15px; flex: 1; justify-content: center; }
+        .quiz-q { font-size: 2.2rem; font-weight: 900; color: var(--text-dark); }
+        input { width: 100px; padding: 10px; font-size: 2.5rem; text-align: center; border: 4px solid var(--secondary); border-radius: 15px; outline: none; }
+
+        @media (max-height: 550px) {
+            .badge-icon { font-size: 1.6rem; }
+            .badge-text { display: none; }
+            .main-mult { font-size: 2.5rem; }
+            input { font-size: 1.8rem; width: 80px; }
+            .nav-btn { padding: 10px 15px; min-width: 80px; }
+        }
     </style>
 </head>
 <body onclick="initAudio()">
 
-<div class="badge-sidebar" id="badgeContainer"></div>
-<button class="btn-reset" onclick="resetAllProgress()">RESET ALL 🔄</button>
-
 <div class="app-container">
-    <div id="puppy-overlay" style="position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%) scale(0); font-size: 100px; z-index: 100; transition: 0.3s;">🐶</div>
-    <h1>Gem Math School! 💎</h1>
-    
-    <select id="baseNum" onchange="resetToStart()" style="padding: 5px; font-family: 'Fredoka One'; border-radius: 8px;"></select>
-
-    <div class="visual-box" id="visualBox"></div>
-
-    <div class="formula-box">
-        <div class="main-mult" id="multDisplay">2 × 1</div>
-        <div class="hint-add" id="addDisplay">(2)</div>
-    </div>
-
-    <div class="quiz-section">
-        <div class="input-group" style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-            <span id="flipQuestion" style="font-size: 1.5rem; font-weight: 900;">1 × 2 = </span>
-            <input type="number" id="flipAns" oninput="checkQuiz()" placeholder="?" inputmode="numeric">
+    <div class="header-row">
+        <h1>Gem Math School! 💎</h1>
+        <div class="header-controls">
+            <select id="baseNum" onchange="resetToStart()" style="padding: 6px; font-family: 'Fredoka One'; border-radius: 8px; border: 2px solid #ddd;"></select>
+            <button class="btn-reset" onclick="resetAllProgress()">RESET 🔄</button>
         </div>
-        <div id="feedback" style="font-weight: 800; margin-top: 5px;">Fill the box! 🦴</div>
     </div>
 
-    <div style="display: flex; justify-content: center; gap: 20px; margin-top: 10px;">
-        <button onclick="changeStep(-1)" style="background: #BDBDBD; color: white;">⬅ BACK</button>
-        <button id="nextBtn" onclick="attemptNext()" class="btn-next">NEXT ➡</button>
+    <div class="badge-grid" id="badgeContainer"></div>
+
+    <div class="learning-area">
+        <div class="visual-box" id="visualBox"></div>
+
+        <div class="formula-box">
+            <div class="main-mult" id="multDisplay">2 × 1</div>
+            <div class="hint-add" id="addDisplay">(2)</div>
+        </div>
+
+        <div class="quiz-container">
+            <button onclick="changeStep(-1)" class="nav-btn btn-back">⬅ BACK</button>
+            
+            <div class="quiz-core">
+                <span class="quiz-q" id="flipQuestion">1 × 2 = </span>
+                <input type="number" id="flipAns" oninput="checkQuiz()" placeholder="?" inputmode="numeric">
+            </div>
+
+            <button id="nextBtn" onclick="attemptNext()" class="nav-btn btn-next">NEXT ➡</button>
+        </div>
     </div>
+
+    <div id="puppy-overlay" style="position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) scale(0); font-size: 120px; z-index: 100; transition: 0.3s;">🐶</div>
 </div>
 
 <script>
-    let audioCtx;
-    let currentStep = 1;
-    let isQuizSolved = false;
+    let audioCtx; let currentStep = 1; let isQuizSolved = false;
     let masteredTables = JSON.parse(localStorage.getItem('masteredTables')) || [];
-    
     const icons = ["🍭", "🍊", "🍎", "⭐", "🍓", "🍒", "🍇", "🍩", "🎈"];
     const badgeIcons = ["🟤", "⚪", "🟢", "🔴", "🔵", "🟣", "🟠", "🟡", "💎"];
     const gemNames = ["BRONZE", "STONE", "EMERALD", "RUBY", "SAPPHIRE", "AMETHYST", "TOPAZ", "AMBER", "DIAMOND"];
 
-    function initAudio() {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-    }
+    function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
 
     function initBadges() {
         const container = document.getElementById('badgeContainer');
@@ -137,49 +132,37 @@
             const badge = document.createElement('div');
             badge.className = `badge b-${i} ${isActive ? 'active' : ''}`;
             badge.id = `badge-${i}`;
-            badge.innerHTML = `
-                <div class="badge-icon">${badgeIcons[i-1]}</div>
-                <div class="badge-text">T${i} ${gemNames[i-1]}</div>
-            `;
+            badge.innerHTML = `<div class="badge-icon">${badgeIcons[i-1]}</div><div class="badge-text">${gemNames[i-1]}</div>`;
             container.appendChild(badge);
         }
     }
 
     function playDogSound(type) {
-        if (!audioCtx) return;
-        const now = audioCtx.currentTime;
+        if (!audioCtx) return; const now = audioCtx.currentTime;
         if (type === 'woof') {
-            [0, 0.1].forEach(d => {
-                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
-                o.type = 'triangle'; o.frequency.setValueAtTime(160, now + d);
-                o.frequency.exponentialRampToValueAtTime(400, now + d + 0.05);
-                g.gain.setValueAtTime(0.3, now + d); g.gain.linearRampToValueAtTime(0, now + d + 0.15);
-                o.connect(g); g.connect(audioCtx.destination);
-                o.start(now + d); o.stop(now + d + 0.2);
-            });
+            const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+            o.type = 'triangle'; o.frequency.setValueAtTime(160, now);
+            o.frequency.exponentialRampToValueAtTime(450, now + 0.1);
+            g.gain.setValueAtTime(0.2, now); g.gain.linearRampToValueAtTime(0, now + 0.2);
+            o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(now + 0.2);
         } else if (type === 'land') {
             const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
-            o.type = 'sine'; o.frequency.setValueAtTime(150, now);
-            o.frequency.exponentialRampToValueAtTime(60, now + 0.3);
-            g.gain.setValueAtTime(0.6, now); g.gain.linearRampToValueAtTime(0, now + 0.4);
-            o.connect(g); g.connect(audioCtx.destination);
-            o.start(); o.stop(now + 0.4);
+            o.type = 'sine'; o.frequency.setValueAtTime(180, now);
+            o.frequency.exponentialRampToValueAtTime(70, now + 0.4);
+            g.gain.setValueAtTime(0.4, now); g.gain.linearRampToValueAtTime(0, now + 0.5);
+            o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(now + 0.5);
         }
     }
 
     function renderBasket(base, icon) {
-        const basket = document.createElement('div');
-        basket.className = 'basket';
+        const basket = document.createElement('div'); basket.className = 'basket';
         let groups = (base === 6) ? [3, 3] : (base === 7) ? [5, 2] : (base === 8) ? [4, 4] : (base === 9) ? [3, 3, 3] : [base];
         groups.forEach((count, idx) => {
             for(let i=0; i<count; i++) {
-                const span = document.createElement('span');
-                span.className = 'fruit'; span.innerText = icon;
-                basket.appendChild(span);
+                const span = document.createElement('span'); span.className = 'fruit'; span.innerText = icon; basket.appendChild(span);
             }
             if (idx < groups.length - 1) {
-                const divider = document.createElement('div');
-                divider.className = 'divider'; basket.appendChild(divider);
+                const div = document.createElement('div'); div.style.borderLeft="2px dashed #ccc"; div.style.height="20px"; div.style.margin="0 4px"; basket.appendChild(div);
             }
         });
         return basket;
@@ -188,8 +171,7 @@
     function checkQuiz() {
         const base = parseInt(document.getElementById('baseNum').value);
         if (document.getElementById('flipAns').value == base * currentStep && !isQuizSolved) {
-            isQuizSolved = true;
-            playDogSound('woof');
+            isQuizSolved = true; playDogSound('woof');
             document.getElementById('puppy-overlay').style.transform = "translate(-50%, -50%) scale(1)";
             setTimeout(() => document.getElementById('puppy-overlay').style.transform = "translate(-50%, -50%) scale(0)", 800);
             document.getElementById('nextBtn').style.background = "var(--secondary)";
@@ -198,8 +180,7 @@
 
     function updateView() {
         const base = parseInt(document.getElementById('baseNum').value);
-        const icon = icons[base - 1];
-        isQuizSolved = false;
+        const icon = icons[base - 1]; isQuizSolved = false;
         const visualBox = document.getElementById('visualBox');
         visualBox.innerHTML = '';
         for(let i=0; i < currentStep; i++) visualBox.appendChild(renderBasket(base, icon));
@@ -210,68 +191,46 @@
         document.getElementById('nextBtn').style.background = "#BDBDBD";
     }
 
-    function fireConfetti() {
-        const duration = 3 * 1000;
-        const end = Date.now() + duration;
-        (function frame() {
-            confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#00E5FF', '#FFEB3B', '#FF9800'] });
-            confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#00E5FF', '#FFEB3B', '#FF9800'] });
-            if (Date.now() < end) requestAnimationFrame(frame);
-        }());
-    }
-
     function flyBadge(base) {
         const target = document.getElementById(`badge-${base}`);
         const flyer = document.createElement('div');
-        flyer.className = 'flying-badge';
-        flyer.innerHTML = `<span style="font-size:80px">${badgeIcons[base-1]}</span><span style="color:white; font-family:'Fredoka One'; font-size:24px; text-shadow: 2px 2px 5px black;">TABLE ${base} MASTER!</span>`;
+        flyer.style.position = 'fixed'; flyer.style.top = '50%'; flyer.style.left = '50%';
+        flyer.style.transform = 'translate(-50%, -50%) scale(6)'; flyer.style.zIndex = '1000';
+        flyer.style.transition = '1s cubic-bezier(0.19, 1, 0.22, 1)';
+        flyer.innerHTML = `<span>${badgeIcons[base-1]}</span>`;
         document.body.appendChild(flyer);
-
         const rect = target.getBoundingClientRect();
         setTimeout(() => {
             flyer.style.top = rect.top + (rect.height / 2) + "px";
             flyer.style.left = rect.left + (rect.width / 2) + "px";
-            flyer.style.transform = "translate(-50%, -50%) scale(0.4)";
+            flyer.style.transform = "translate(-50%, -50%) scale(0.3)";
             flyer.style.opacity = "0";
-        }, 100);
-
+        }, 200);
         setTimeout(() => {
             playDogSound('land');
             if (!masteredTables.includes(base)) {
                 masteredTables.push(base);
                 localStorage.setItem('masteredTables', JSON.stringify(masteredTables));
-                if (masteredTables.length === 9) fireConfetti();
-                else confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
             }
-            initBadges();
-            document.body.removeChild(flyer);
-        }, 1100);
+            initBadges(); document.body.removeChild(flyer);
+        }, 1300);
     }
 
     function attemptNext() {
         if (!isQuizSolved) return;
         if (currentStep < 9) { currentStep++; updateView(); }
-        else {
-            flyBadge(parseInt(document.getElementById('baseNum').value));
-            setTimeout(() => { resetToStart(); }, 1600);
-        }
+        else { flyBadge(parseInt(document.getElementById('baseNum').value)); setTimeout(resetToStart, 1800); }
     }
 
     function resetAllProgress() {
-        if (confirm("Do you want to clear all your gems and start over? 💎🔄")) {
-            masteredTables = [];
-            localStorage.removeItem('masteredTables');
-            initBadges();
-            resetToStart();
-        }
+        if (confirm("Reset all gems? 💎🔄")) { masteredTables = []; localStorage.removeItem('masteredTables'); initBadges(); resetToStart(); }
     }
 
     const select = document.getElementById('baseNum');
     for(let i=1; i<=9; i++) {
-        let opt = document.createElement('option');
-        opt.value = i; opt.innerText = "Table " + i;
-        if (i === 2) opt.selected = true;
-        select.appendChild(opt);
+        let opt = document.createElement('option'); opt.value = i; opt.innerText = "Table " + i;
+        if (i === 2) opt.selected = true; select.appendChild(opt);
     }
     function changeStep(val) { if(currentStep+val >= 1) {currentStep += val; updateView();} }
     function resetToStart() { currentStep = 1; updateView(); }
