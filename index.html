@@ -7,129 +7,125 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;800&family=Indie+Flower&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --primary: #FF9800; 
-            --secondary: #4CAF50; 
-            --bg: #2D4C3E; /* Deep Chalkboard Green */
-            --text-dark: #333;
-            --error: #FF5252;
+            --primary: #FF9800; --secondary: #4CAF50; 
+            --bg: #2D4C3E; --text-dark: #333; --error: #FF5252;
         }
         body {
-            font-family: 'Nunito', sans-serif; 
-            background-color: var(--bg); 
-            /* Subtle chalkboard texture effect */
+            font-family: 'Nunito', sans-serif; background-color: var(--bg); 
             background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
-            background-size: 20px 20px;
-            color: white;
-            margin: 0; padding: 10px; 
+            background-size: 20px 20px; color: white; margin: 0; padding: 10px; 
             display: flex; justify-content: center; align-items: center; 
-            min-height: 100vh;
-            position: relative; overflow: hidden;
+            min-height: 100vh; position: relative; overflow: hidden;
         }
         .app-container {
             background: white; border-radius: 25px; padding: 25px; 
             box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            max-width: 950px; width: 95%; text-align: center; 
-            color: var(--text-dark);
-            z-index: 1;
+            max-width: 950px; width: 95%; text-align: center; color: var(--text-dark); z-index: 1;
         }
-        h1 { font-family: 'Fredoka One', cursive; color: var(--bg); font-size: 2rem; margin: 0 0 15px 0; }
+        h1 { font-family: 'Fredoka One', cursive; color: var(--bg); font-size: 1.8rem; margin: 0 0 15px 0; }
         
-        .selector-row { margin-bottom: 15px; font-weight: 800; }
-        select { 
-            padding: 8px 15px; font-size: 1rem; border-radius: 12px; 
-            border: 2px solid var(--bg); font-family: 'Fredoka One'; cursor: pointer; 
-        }
+        .selector-row { margin-bottom: 10px; font-weight: 800; font-size: 0.9rem; }
+        select { padding: 6px 12px; font-size: 0.9rem; border-radius: 10px; border: 2px solid var(--bg); font-family: 'Fredoka One'; cursor: pointer; }
 
+        /* 🍎 Visual Area */
         .visual-box {
-            background: #f9f9f9; border-radius: 15px; padding: 15px; margin: 10px 0;
-            min-height: 160px; display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 12px;
+            background: #f9f9f9; border-radius: 15px; padding: 20px; margin: 10px 0;
+            min-height: 140px; display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 12px;
             border: 1px solid #eee;
         }
         .basket {
             background: #EFEBE9; border: 2px solid #A1887F; border-radius: 12px; padding: 8px;
-            display: flex; gap: 10px; align-items: center; animation: pop 0.2s ease-out;
+            display: flex; gap: 8px; align-items: center; animation: pop 0.2s ease-out;
         }
-        .sub-group {
-            display: flex; gap: 3px; border: 1.5px dashed #BCAAA4; 
-            padding: 4px; border-radius: 8px;
+        .fruit { font-size: 1.5rem; filter: drop-shadow(0 2px 1px rgba(0,0,0,0.1)); }
+
+        /* 🔢 Main Formula Area (The core of your request) */
+        .info-section { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            margin: 20px 0; position: relative;
         }
-        .fruit { font-size: 1.5rem; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); }
+        .formula-container {
+            display: flex; align-items: flex-end; justify-content: center; flex-wrap: wrap; gap: 15px;
+        }
+        .formula-display { 
+            font-size: 3.8rem; /* 메인은 크게! */
+            font-weight: 900; color: var(--bg); line-height: 1;
+            font-family: 'Fredoka One', cursive;
+        }
+        .addition-bridge { 
+            font-size: 1rem; /* 보조는 작게 */
+            color: #666; background: #f0f0f0; padding: 6px 15px; border-radius: 20px;
+            font-weight: 700; margin-bottom: 5px; border: 1px solid #ddd;
+        }
 
-        .info-section { display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; margin: 15px 0; }
-        .formula-display { font-size: 2.5rem; font-weight: 800; color: var(--bg); }
-        .addition-bridge { font-size: 1.1rem; color: #555; background: #f0f0f0; padding: 10px 20px; border-radius: 25px; }
-
+        /* 🧩 Quiz Area */
         .quiz-section { 
-            background: #FFF8E1; border-radius: 20px; padding: 20px; 
+            background: #FFF8E1; border-radius: 20px; padding: 15px; 
             border: 3px dashed var(--primary); margin-bottom: 15px;
         }
-        .quiz-container { display: flex; gap: 30px; justify-content: center; align-items: center; }
-        .input-group { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; font-weight: 900; }
-        input { 
-            width: 60px; padding: 10px; font-size: 1.2rem; text-align: center; 
-            border: 3px solid var(--secondary); border-radius: 12px; outline: none; 
-        }
+        .quiz-container { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .quiz-title { font-size: 0.9rem; color: #5D4037; font-weight: 800; }
+        .input-group { display: flex; align-items: center; gap: 10px; font-size: 1.8rem; font-weight: 900; }
+        input { width: 80px; padding: 10px; font-size: 1.5rem; text-align: center; border: 3px solid var(--secondary); border-radius: 12px; outline: none; }
         
-        .nav-btns { display: flex; justify-content: center; gap: 60px; }
+        /* 🔘 Buttons */
+        .nav-btns { display: flex; justify-content: center; gap: 40px; }
         button { 
-            font-family: 'Fredoka One', cursive; padding: 15px 35px; font-size: 1.1rem; 
-            border: none; border-radius: 18px; cursor: pointer; transition: 0.2s;
-            box-shadow: 0 5px 0 rgba(0,0,0,0.1);
+            font-family: 'Fredoka One', cursive; padding: 12px 30px; font-size: 1rem; 
+            border: none; border-radius: 15px; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 rgba(0,0,0,0.1);
         }
         .btn-back { background: #9E9E9E; color: white; }
-        .btn-next { background: var(--secondary); color: white; }
+        .btn-next { background: #9E9E9E; color: white; } /* Initial state: Gray */
         
-        #feedback { font-weight: 800; margin-top: 10px; height: 1.5rem; font-size: 1.1rem; }
-        .shake { animation: shake 0.4s; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-        @keyframes pop { 0% { transform: scale(0.8); } 100% { transform: scale(1); } }
+        #feedback { font-weight: 800; margin-top: 8px; height: 1.2rem; font-size: 1rem; }
+        
+        /* 🏆 Trophy */
+        #trophy-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(45, 76, 62, 0.98); display: none;
+            flex-direction: column; justify-content: center; align-items: center; z-index: 100;
+        }
+        .trophy-icon { font-size: 100px; animation: bounce 1s infinite; }
 
-        /* Chalk Doodle - The Easter Egg */
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        @keyframes pop { 0% { transform: scale(0.8); } 100% { transform: scale(1); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        .shake { animation: shake 0.4s; }
+
         .chalk-doodle {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 1in;
-            height: 1cm;
-            font-family: 'Indie Flower', cursive;
-            font-size: 18px;
-            color: rgba(255, 255, 255, 0.7); /* Chalk white */
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            pointer-events: none;
-            /* Chalk texture effect on text */
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-            transform: rotate(-2deg);
+            position: fixed; bottom: 20px; left: 20px; font-family: 'Indie Flower', cursive; 
+            font-size: 18px; color: rgba(255, 255, 255, 0.7); pointer-events: none; transform: rotate(-2deg);
         }
     </style>
 </head>
-<body>
+<body onclick="initAudio()">
 
 <div class="app-container">
     <h1>Multiplication Master! 🏫</h1>
     
     <div class="selector-row">
-        <span>Step 1: Select Table ➡ </span>
+        <span>Table ➡ </span>
         <select id="baseNum" onchange="resetToStart()"></select>
     </div>
 
     <div class="visual-box" id="visualBox"></div>
 
     <div class="info-section">
-        <div class="formula-display" id="multFormula"></div>
-        <div class="addition-bridge" id="addFormula"></div>
+        <div class="formula-container">
+            <div class="formula-display" id="multFormula"></div>
+            <div class="addition-bridge" id="addFormula"></div>
+        </div>
     </div>
 
     <div class="quiz-section">
-        <strong>Step 2: Solve the Flip Quiz! 🧩</strong>
         <div class="quiz-container">
-            <div class="input-group"><span id="qText1"></span><input type="number" id="ans1" oninput="checkQuiz()"></div>
-            <div style="font-size: 1.5rem; color: var(--primary);">↔</div>
-            <div class="input-group"><span id="qText2"></span><input type="number" id="ans2" oninput="checkQuiz()"></div>
+            <div class="quiz-title" id="quizTitle">Switch the order! 🧩</div>
+            <div class="input-group">
+                <span id="flipQuestion"></span>
+                <input type="number" id="flipAns" oninput="checkQuiz()" placeholder="?">
+            </div>
         </div>
-        <div id="feedback"></div>
+        <div id="feedback">Solve the flip to unlock Next! 😉</div>
     </div>
 
     <div class="nav-btns">
@@ -138,20 +134,65 @@
     </div>
 </div>
 
-<div class="chalk-doodle">
-    WE ❤️ Theo
+<div id="trophy-screen">
+    <div class="trophy-icon">🏆</div>
+    <h2 style="font-size: 2.5rem; color: #FFD700; font-family: 'Fredoka One';">CONGRATS!</h2>
+    <p id="trophyText" style="font-size: 1.2rem; color: white;"></p>
+    <button class="btn-next" onclick="closeTrophy()" style="background: var(--secondary); margin-top: 20px;">PLAY AGAIN</button>
 </div>
 
+<div class="chalk-doodle">WE ❤️ Theo</div>
+
 <script>
+    let audioCtx;
     let currentStep = 1;
     let isQuizSolved = false;
     const icons = ["🍭", "🍊", "🍎", "⭐", "🍓", "🍒", "🍇", "🍩", "🎈"];
+
+    function initAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playSound(type) {
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+        if (type === 'correct') {
+            const notes = [659.25, 783.99]; 
+            notes.forEach((freq, i) => {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.type = 'sine';
+                o.frequency.setValueAtTime(freq, now + (i * 0.12));
+                g.gain.setValueAtTime(0, now + (i * 0.12));
+                g.gain.linearRampToValueAtTime(0.1, now + (i * 0.12) + 0.05);
+                g.gain.exponentialRampToValueAtTime(0.01, now + (i * 0.12) + 0.3);
+                o.connect(g); g.connect(audioCtx.destination);
+                o.start(now + (i * 0.12)); o.stop(now + (i * 0.12) + 0.4);
+            });
+        } else if (type === 'wrong') {
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.type = 'sawtooth'; o.frequency.setValueAtTime(110, now);
+            g.gain.setValueAtTime(0.1, now); g.gain.linearRampToValueAtTime(0, now + 0.3);
+            o.connect(g); g.connect(audioCtx.destination);
+            o.start(); o.stop(now + 0.3);
+        } else if (type === 'trophy') {
+            [523, 659, 783, 1046].forEach((f, i) => {
+                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                osc.frequency.value = f; gain.gain.setValueAtTime(0.1, now + i * 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.3);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(now + i * 0.1); osc.stop(now + i * 0.1 + 0.3);
+            });
+        }
+    }
 
     const select = document.getElementById('baseNum');
     for(let i=1; i<=9; i++) {
         let opt = document.createElement('option');
         opt.value = i; opt.innerText = "Table " + i;
-        if(i===1) opt.selected = true;
+        if (i === 2) opt.selected = true;
         select.appendChild(opt);
     }
 
@@ -162,59 +203,64 @@
         isQuizSolved = false;
 
         visualBox.innerHTML = '';
-        let groups = [base];
-        if (base === 6) groups = [3, 3];
-        else if (base === 7) groups = [5, 2];
-        else if (base === 8) groups = [4, 4];
-        else if (base === 9) groups = [3, 3, 3];
-
         for(let i=0; i < currentStep; i++) {
             let basket = document.createElement('div');
             basket.className = 'basket';
-            groups.forEach(size => {
-                let subGroup = document.createElement('div');
-                subGroup.className = (base >= 6) ? 'sub-group' : '';
-                for(let j=0; j<size; j++) subGroup.innerHTML += `<span class="fruit">${icon}</span>`;
-                basket.appendChild(subGroup);
-            });
+            for(let j=0; j<base; j++) basket.innerHTML += `<span class="fruit">${icon}</span>`;
             visualBox.appendChild(basket);
         }
 
         document.getElementById('multFormula').innerText = `${base} × ${currentStep} = ${base * currentStep}`;
         let addString = "";
         for(let i=0; i<currentStep; i++) addString += base + (i === currentStep - 1 ? "" : " + ");
-        document.getElementById('addFormula').innerText = (currentStep === 1) ? `${base} = ${base}` : `${addString} = ${base * currentStep}`;
+        document.getElementById('addFormula').innerText = (currentStep === 1) ? `${base}` : `${addString} = ${base * currentStep}`;
 
-        document.getElementById('qText1').innerText = `${base} × ${currentStep} = `;
-        document.getElementById('qText2').innerText = `${currentStep} × ${base} = `;
-        document.getElementById('ans1').value = ''; document.getElementById('ans2').value = '';
-        document.getElementById('feedback').innerText = "Solve both to unlock Next! 😉";
+        document.getElementById('quizTitle').innerText = `If ${base} × ${currentStep} = ${base*currentStep}, then...`;
+        document.getElementById('flipQuestion').innerText = `${currentStep} × ${base} = `;
+        document.getElementById('flipAns').value = '';
+        document.getElementById('feedback').innerText = "Solve the flip! 😉";
         document.getElementById('feedback').style.color = "#5D4037";
         document.getElementById('prevBtn').disabled = (currentStep === 1);
+        document.getElementById('nextBtn').style.background = "#9E9E9E";
     }
 
     function checkQuiz() {
         const base = parseInt(document.getElementById('baseNum').value);
         const target = base * currentStep;
-        if (document.getElementById('ans1').value == target && document.getElementById('ans2').value == target) {
-            document.getElementById('feedback').innerText = "Correct! ✨ " + target + " is the magic number!";
+        const input = document.getElementById('flipAns').value;
+        if (input == target) {
+            if (!isQuizSolved) playSound('correct');
+            document.getElementById('feedback').innerText = "Awesome! ✨ Same answer!";
             document.getElementById('feedback').style.color = "var(--secondary)";
+            document.getElementById('nextBtn').style.background = "var(--secondary)";
             isQuizSolved = true;
-        } else { isQuizSolved = false; }
+        } else {
+            isQuizSolved = false;
+            document.getElementById('nextBtn').style.background = "#9E9E9E";
+        }
     }
 
     function attemptNext() {
         if (isQuizSolved) {
             if (currentStep < 9) { currentStep++; updateView(); }
-            else { alert("Amazing! You finished Table " + document.getElementById('baseNum').value + "! 🎉"); }
+            else { showTrophy(); }
         } else {
+            playSound('wrong');
             const fb = document.getElementById('feedback');
-            fb.innerText = "Oops! Answer the quiz first! 🐾";
+            fb.innerText = "Try the flip quiz first! 🐾";
             fb.style.color = "var(--error)";
             fb.classList.remove('shake'); void fb.offsetWidth; fb.classList.add('shake');
         }
     }
 
+    function showTrophy() {
+        const base = document.getElementById('baseNum').value;
+        playSound('trophy');
+        document.getElementById('trophyText').innerText = `Master of Table ${base}!`;
+        document.getElementById('trophy-screen').style.display = 'flex';
+    }
+
+    function closeTrophy() { document.getElementById('trophy-screen').style.display = 'none'; resetToStart(); }
     function changeStep(val) { currentStep += val; updateView(); }
     function resetToStart() { currentStep = 1; updateView(); }
 
